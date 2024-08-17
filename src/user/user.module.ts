@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { User } from './user.model';
+import { UserController } from './user.controller';
+import { DatabaseModule } from '../utils/database.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [SequelizeModule.forFeature([User])],
-  providers: [UserService],
+  imports: [DatabaseModule],
+  providers: [UserService, JwtService],
   controllers: [UserController],
-  exports: [UserService], // Якщо потрібно використовувати в інших модулях
 })
 export class UserModule {}

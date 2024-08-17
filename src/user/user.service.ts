@@ -1,40 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
+import { Injectable, Inject } from '@nestjs/common';
+import { Sequelize } from 'sequelize-typescript';
 import { User } from './user.model';
+import { JwtService } from '@nestjs/jwt';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User)
-    private readonly userModel: typeof User,
+    @Inject('SEQUELIZE') private readonly sequelize: Sequelize,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async createUser(name: string, email: string, phone: number): Promise<User> {
-    console.log('phone =>', phone);
-    return this.userModel.create({ name, email, phone });
+  // Отримати всіх користувачів
+  async getAllUsers(): Promise<User[]> {
+    return this.sequelize.getRepository(User).findAll();
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userModel.findAll();
-  }
-
-  async findOne(id: number): Promise<User> {
-    return this.userModel.findOne({
-      where: {
-        id,
-      },
-    });
-  }
-
-  async updateUser(id: number, data: Partial<User>): Promise<[number, User[]]> {
-    return this.userModel.update(data, {
-      where: { id },
-      returning: true,
-    });
-  }
-
-  async deleteUser(id: number): Promise<void> {
-    const user = await this.findOne(id);
-    await user.destroy();
+  // Створити користувача
+  async createUser(
+    name: string,
+    email: string,
+    phone: number,
+  ): Promise<{ access_token: string }> {
+    const payload = await this.sequelize
+      .getRepository(User)
+      .create({ name, email, phone });
+    return {
+      access_token: jwt.sign(payload.dataValues, 'yourSecretKey', {
+        expiresIn: 3600000,
+      }),
+    };
   }
 }

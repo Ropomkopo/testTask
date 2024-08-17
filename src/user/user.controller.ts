@@ -3,50 +3,29 @@ import {
   Get,
   Post,
   // Put,
-  Delete,
+  // Delete,
   Body,
-  Param,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from './user.model';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/createUser';
 
 @ApiTags('User')
-@Controller('users')
+@Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  async createUser(@Body() userData: CreateUserDto): Promise<User> {
-    return this.userService.createUser(
-      userData.name,
-      userData.email,
-      userData.phone,
-    );
-  }
-
   @Get()
-  async findAllUsers(): Promise<User[]> {
-    return this.userService.findAll();
+  async getAllUsers() {
+    return this.userService.getAllUsers();
   }
 
-  @Get(':id')
-  async findOneUser(@Param('id') id: number): Promise<User> {
-    return this.userService.findOne(id);
-  }
-
-  //   @Put(':id')
-  //   async updateUser(
-  //     @Param('id') id: number,
-  //     @Body() userData: Partial<User>,
-  //   ): Promise<User[]> {
-  //     const [_, updatedUsers] = await this.userService.updateUser(id, userData);
-  //     return updatedUsers;
-  //   }
-
-  @Delete(':id')
-  async deleteUser(@Param('id') id: number): Promise<void> {
-    return this.userService.deleteUser(id);
+  @Post()
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    return this.userService.createUser(
+      createUserDto.name,
+      createUserDto.email,
+      createUserDto.phone,
+    );
   }
 }
