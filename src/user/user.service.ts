@@ -1,15 +1,11 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { User } from './user.model';
-import { JwtService } from '@nestjs/jwt';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @Inject('SEQUELIZE') private readonly sequelize: Sequelize,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(@Inject('SEQUELIZE') private readonly sequelize: Sequelize) {}
 
   // Отримати всіх користувачів
   async getAllUsers(): Promise<User[]> {

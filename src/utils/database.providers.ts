@@ -12,12 +12,12 @@ export const databaseProviders = [
         username: 'root',
         password: 'rootpassword',
         database: 'nest_db',
-        models: [User], // Підключаємо моделі
+        models: [User],
         dialectOptions: {
           connectTimeout: 60000,
           allowPublicKeyRetrieval: true,
         },
-        logging: false, // Опціонально: вимкнути логування SQL-запитів
+        logging: false,
       });
       await sequelize.sync();
       return sequelize;
