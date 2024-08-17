@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { User } from './user.model';
 import { JwtService } from '@nestjs/jwt';
@@ -30,5 +30,15 @@ export class UserService {
         expiresIn: 3600000,
       }),
     };
+  }
+
+  async findUserById(id: number): Promise<User> {
+    const user = await this.sequelize.getRepository(User).findByPk(id);
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return user;
   }
 }
